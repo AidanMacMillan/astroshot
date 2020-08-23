@@ -1,0 +1,22 @@
+{
+  "name": "astroshot",
+  "version": "1.0.0",
+  "description": "A game created for the Miz Jam 1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AidanMacMillan/astroshot.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AidanMacMillan/astroshot/issues"
+  },
+  "homepage": "https://github.com/AidanMacMillan/astroshot#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
