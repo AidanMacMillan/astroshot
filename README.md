@@ -1,2 +1,2 @@
-# astroshot
-A game created for the Miz Jam 1
+# Astroshot
+A simple game created using JavaScript
