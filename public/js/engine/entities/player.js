@@ -9,12 +9,18 @@ export default class Player extends Entity {
         this.rotation = 0;
         this.vX = 0;
         this.vY = 0;
-        this.moveSpeed = 3;
+        this.moveSpeed = 5;
+        this.stickForce = 1;
         this.jumpForce = 8;
 
         this.jetpackEnabled = false;
-        this.jetpackForce = 0.1;
-       
+        this.jetpackForce = 0.12;
+
+        this.planet = {};
+        this.planet.dist = 0;
+        this.planet.x = 0;
+        this.planet.y = 0;
+
         this.grounded = false;
     }
 
@@ -22,18 +28,23 @@ export default class Player extends Entity {
         this.physics(game);
 
         if(game.input.keys.left.pressed) {
-            this.x += -this.moveSpeed * Math.cos(this.rotation) * game.time.deltaTime;
-            this.y += -this.moveSpeed * Math.sin(this.rotation) * game.time.deltaTime;
+            let angle = -this.moveSpeed/this.planet.dist*game.time.deltaTime;
+            this.x = (this.x-this.planet.x) * Math.cos(angle) - (this.y-this.planet.y) * Math.sin(angle) + this.planet.x;
+            this.y = (this.y-this.planet.y) * Math.cos(angle) + (this.x-this.planet.x) * Math.sin(angle) + this.planet.y;
+
+            this.vX = this.vX * Math.cos(angle) - this.vY * Math.sin(angle);
+            this.vY = this.vY * Math.cos(angle) + this.vX * Math.sin(angle);
         }
 
         if(game.input.keys.right.pressed) {
-            this.x += this.moveSpeed * Math.cos(this.rotation) * game.time.deltaTime;
-            this.y += this.moveSpeed * Math.sin(this.rotation) * game.time.deltaTime;
+            let angle = this.moveSpeed/this.planet.dist*game.time.deltaTime;
+            this.x = (this.x-this.planet.x) * Math.cos(angle) - (this.y-this.planet.y) * Math.sin(angle) + this.planet.x;
+            this.y = (this.y-this.planet.y) * Math.cos(angle) + (this.x-this.planet.x) * Math.sin(angle) + this.planet.y;
         }
 
         if(this.grounded && game.input.keys.up.down) {
-            this.vX += this.jumpForce * Math.cos(this.rotation - Math.PI/2);
-            this.vY += this.jumpForce * Math.sin(this.rotation - Math.PI/2);
+            this.vX = this.jumpForce * Math.cos(this.rotation - Math.PI/2);
+            this.vY = this.jumpForce * Math.sin(this.rotation - Math.PI/2);
         }
 
         if(!this.grounded && game.input.keys.up.up) {
@@ -64,9 +75,9 @@ export default class Player extends Entity {
                 let distSqr = dX*dX + dY*dY;
                 let dist = Math.sqrt(distSqr);
 
-                if(dist-entity.radius/2 < closestDist) {
+                if(dist-entity.radius < closestDist) {
                     closest = entity;
-                    closestDist = dist;
+                    closestDist = dist-entity.radius;
                 }
             }
         }.bind(this));
@@ -77,6 +88,10 @@ export default class Player extends Entity {
             let dY = entity.y - this.y;
             let distSqr = dX*dX + dY*dY;
             let dist = Math.sqrt(distSqr);
+
+            this.planet.dist = dist;
+            this.planet.x = entity.x;
+            this.planet.y = entity.y;
 
             if(dX < 0) {
                 if((Math.atan(dY/dX) + Math.PI/2) - this.rotation > Math.PI) {
@@ -125,6 +140,7 @@ export default class Player extends Entity {
         let pos = camera.worldToScreen(this.x, this.y);
 
         game.ctx.beginPath();
+        game.ctx.fillStyle = "rgb(255,255,255)";
         game.ctx.arc(game.width/2 + (pos.x)*camera.unit(),
                      game.height/2 + (pos.y)*camera.unit(),
                      camera.unit()/2, 0, 2 * Math.PI, false);

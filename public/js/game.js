@@ -16,10 +16,11 @@ class Game {
         this.time = new Time();
 
         this.entities = {};
-        this.entities.player = new Player(0,0);
-        this.entities.camera = new Camera(0,0,0,20);
         this.entities.planetA = new Planet(8,8,3,6);
         this.entities.planetB = new Planet(15,0,4,8);
+        this.entities.planetC = new Planet(6,0,2,4);
+        this.entities.player = new Player(0,0);
+        this.entities.camera = new Camera(0,0,0,20);
     }
     
     start() {
@@ -38,8 +39,8 @@ class Game {
         this.width = this.canvas.width;
         this.height = this.canvas.height;
 
+        this.input.update();
         Object.values(this.entities).forEach(function(entity) {
-            this.input.update();
             entity.update(this);
         }.bind(this));
 
